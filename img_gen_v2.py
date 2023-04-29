@@ -47,12 +47,12 @@ def get_image_to_image_model(path=None, device=None):
 
 def gen_initial_img(int_prompt):
     model = get_the_model(None)
-    image = model(int_prompt, num_inference_steps=10).images[0]
+    image = model(int_prompt, num_inference_steps=25).images[0]
 
     return image
 
 
-def generate_story(int_prompt, steps, iterations=10):
+def generate_story(int_prompt, steps, iterations=25):
     image_dic = {}
     init_img = gen_initial_img(int_prompt)
     img2img_model = get_image_to_image_model()
@@ -66,6 +66,5 @@ def generate_story(int_prompt, steps, iterations=10):
             "prompt": step
         }
         img = image
-        break
 
     return init_img, image_dic
