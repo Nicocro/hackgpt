@@ -7,8 +7,13 @@ from langchain.chat_models import ChatOpenAI
 from langchain import LLMChain
 import concurrent.futures
 
-from typing import List
+from typing import List, Any
 import re
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 # chat = ChatAnthropic()
 chat = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
@@ -82,7 +87,7 @@ def generate_image_prompts_based_on_a_step(step: str) -> str:
     return chain.run(step=step)
 
 
-def pipeline(user_description: str, n_steps: int = 10) -> List[str]:
+def pipeline(user_description: str, n_steps: int = 10) -> dict:
     story = generate_the_original_story(user_description)
     steps = generate_the_steps_in_the_story(story, n_steps)
 
@@ -96,10 +101,12 @@ def pipeline(user_description: str, n_steps: int = 10) -> List[str]:
 
     return {"story": story, "steps": steps, "image_prompts": image_prompts}
 
+
 if __name__ == '__main__':
     user_description = "A story about a brave frog."
     from time import time
+
     start = time()
     res = pipeline(user_description)
     finish = time()
-    print(f"Time: {finish-start}")
+    print(f"Time: {finish - start}")
