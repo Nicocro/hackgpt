@@ -4,16 +4,18 @@ from PIL import Image
 from io import BytesIO
 import json
 
+from prompt_generation import pipeline
+
 
 # Function to get random data
 def get_random_data(page_number, user_input=None):
-    # Get random image URL
+    # # Get random image URL
     image_url = f"https://picsum.photos/800/600?random={page_number}"
-
-    # Get random text
-    text_api_url = "https://baconipsum.com/api/?type=all-meat&sentences=2&format=json"
-    response = requests.get(text_api_url)
-    text_output = json.loads(response.text)[0]
+    #
+    # # Get random text
+    # text_api_url = "https://baconipsum.com/api/?type=all-meat&sentences=2&format=json"
+    # response = requests.get(text_api_url)
+    # text_output = json.loads(response.text)[0]
 
     return {"text_output": text_output, "image_url": image_url}
 
@@ -33,12 +35,25 @@ def page_navigation(current_page):
     if current_page < 10:
         with col3:
             if st.button('Next >>'):
+                user_input = st.session_state.user_input
+                response = pipeline(user_input, 5)
+
+                st.session_state.pipeline_response = response
+
                 current_page += 1
 
     return current_page
 
 
 # Main function to display the pages
+def get_pipeline_data(page_number):
+    image_url = f"https://picsum.photos/800/600?random={page_number}"
+    pipeline_response = st.session_state.pipeline_response
+    text_output = pipeline_response.get("story")
+
+    return {"text_output": text_output, "image_url": image_url}
+
+
 def main():
     st.set_page_config(page_title="Narrative chat", layout="wide")
     st.title("Narrative Chat")
@@ -55,7 +70,7 @@ def main():
 
     else:
         # Retrieve data from random generators
-        data = get_random_data(current_page, st.session_state.user_input)
+        data = get_pipeline_data(current_page)
         text_output = data.get('text_output', '')
         image_url = data.get('image_url', '')
 

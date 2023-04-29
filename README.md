@@ -7,4 +7,6 @@
 ```OPENAI_API_KEY=your_key```
 
 ## run
-``` streamlit run streamlit_app.py```
+``` make run```
+alternatively, you can run\
+```streamlit run streamlit_app.py```
