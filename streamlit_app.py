@@ -7,19 +7,6 @@ import json
 from prompt_generation import pipeline
 
 
-# Function to get random data
-def get_random_data(page_number, user_input=None):
-    # # Get random image URL
-    image_url = f"https://picsum.photos/800/600?random={page_number}"
-    #
-    # # Get random text
-    # text_api_url = "https://baconipsum.com/api/?type=all-meat&sentences=2&format=json"
-    # response = requests.get(text_api_url)
-    # text_output = json.loads(response.text)[0]
-
-    return {"text_output": text_output, "image_url": image_url}
-
-
 # Function to create the page navigation
 def page_navigation(current_page):
     col1, col2, col3 = st.columns(3)
@@ -35,10 +22,11 @@ def page_navigation(current_page):
     if current_page < 10:
         with col3:
             if st.button('Next >>'):
-                user_input = st.session_state.user_input
-                response = pipeline(user_input, 5)
+                if current_page == 0:
+                    user_input = st.session_state.user_input
+                    response = pipeline(user_input, 5)
 
-                st.session_state.pipeline_response = response
+                    st.session_state.pipeline_response = response
 
                 current_page += 1
 
@@ -47,11 +35,11 @@ def page_navigation(current_page):
 
 # Main function to display the pages
 def get_pipeline_data(page_number):
-    image_url = f"https://picsum.photos/800/600?random={page_number}"
+    random_img = f"https://picsum.photos/800/600?random={page_number}"
     pipeline_response = st.session_state.pipeline_response
-    text_output = pipeline_response.get("story")
+    text_output = pipeline_response.get("steps")[page_number - 1]
 
-    return {"text_output": text_output, "image_url": image_url}
+    return {"text_output": text_output, "image_url": random_img}
 
 
 def main():
@@ -83,7 +71,7 @@ def main():
             response = requests.get(image_url)
             image = Image.open(BytesIO(response.content))
             st.image(image, caption=f"Image for Page {current_page}",
-                     use_column_width=True)
+                     use_column_width=False, width=400)
 
     # Display page navigation
     current_page = page_navigation(current_page)
