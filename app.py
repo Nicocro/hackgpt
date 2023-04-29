@@ -57,7 +57,7 @@ def main():
 
     # Display content for each page
     if current_page == 0:
-        st.write("Tell me what story you would like me to tell:")
+        st.write("Describe a story you would like me to tell:")
         user_input = st.text_area("")
         st.session_state.user_input = user_input
 

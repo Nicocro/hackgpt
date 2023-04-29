@@ -49,7 +49,7 @@ def gen_initial_img(int_prompt):
     return image
 
 
-def generate_story(int_prompt, steps, iterations=100):
+def generate_story(int_prompt, steps, iterations=133):
     image_dic = {}
     init_img = gen_initial_img(int_prompt)
     img2img_model = get_image_to_image_model()

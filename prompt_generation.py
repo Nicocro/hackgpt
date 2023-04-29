@@ -97,6 +97,7 @@ def pipeline(user_description: str, n_steps: int = 10) -> dict:
 
     image_prompts = [fut.result() for fut in image_prompts_futures]
 
+    print(story)
     return {"story": story, "steps": steps, "image_prompts": image_prompts}
 
 
