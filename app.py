@@ -44,12 +44,8 @@ def page_navigation(current_page):
 def get_pipeline_data(page_number):
     pipeline_response = st.session_state.pipeline_response
     text_output = pipeline_response.get("steps")[page_number - 1]
-
-    # random_img = f"https://picsum.photos/800/600?random={page_number}"
-    # response = requests.get(random_img)
-    # image = Image.open(BytesIO(response.content))
     img_dict = st.session_state.img_dict
-    img = img_dict[page_number-1]
+    img = img_dict[page_number-1].get("image")
 
     return {"text_output": text_output, "image_obj": img}
 

@@ -3,4 +3,4 @@ install:
 	.venv/bin/pip install -r requirements.txt
 
 run:
-	streamlit run streamlit_app.py
+	streamlit run app.py
