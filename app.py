@@ -1,7 +1,4 @@
 import streamlit as st
-import requests
-from PIL import Image
-from io import BytesIO
 from gtts import gTTS
 
 from img_gen_v2 import generate_story

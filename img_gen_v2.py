@@ -6,14 +6,12 @@ from diffusers import StableDiffusionImg2ImgPipeline, \
 
 def check_cuda_device():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(device)
     return device
 
 
 def get_the_model(device=None):
     model_id = "stabilityai/stable-diffusion-2"
-    # if path:
-    #     pipe = StableDiffusionPipeline.from_pretrained(path, torch_dtype=torch.float16)
-    # else:
     pipe = StableDiffusionPipeline.from_pretrained(model_id,
                                                    torch_dtype=torch.float16)
     if device:
@@ -53,20 +51,18 @@ def gen_initial_img(int_prompt):
     return image
 
 
-def generate_story(int_prompt, steps, iterations=100):
+def generate_story(pipe, original_image, steps, iterations=10):
     image_dic = {}
-    init_img = gen_initial_img(int_prompt)
-    img2img_model = get_image_to_image_model()
-
-    img = init_img
-
+    img = original_image
     for idx, step in enumerate(steps):
-        image = img2img_model(prompt=step, image=img, strength=0.75, guidance_scale=7.5,
-                              num_inference_steps=iterations).images[0]
-        image_dic[idx] = {
+        print(idx)
+        image = pipe(prompt=step, image=img, strength=0.75, guidance_scale=7.5,
+                     num_inference_steps=iterations).images[0]
+        image_dic[f"step_{idx}"] = {
             "image": image,
             "prompt": step
         }
         img = image
+        break
 
-    return init_img, image_dic
+    return image_dic
