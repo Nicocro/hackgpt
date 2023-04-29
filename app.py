@@ -23,7 +23,7 @@ def page_navigation(current_page):
                 if current_page == 0:
                     user_input = st.session_state.user_input
                     prompt_response = pipeline(user_input, 10)
-                    image_prompts_steps = prompt_response.get("image_prompts_steps")
+                    image_prompts_steps = prompt_response.get("image_prompts")
                     init_prompt = prompt_response.get("story")
 
                     init_img, img_dict = generate_story(init_prompt,
@@ -50,7 +50,7 @@ def get_pipeline_data(page_number):
 
 def main():
     st.set_page_config(page_title="Narrative chat", layout="wide")
-    st.title("DreamBot")
+    st.title("DreamGPT")
 
     # Initialize the current page
     current_page = st.session_state.get('current_page', 0)
