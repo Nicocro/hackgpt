@@ -1,7 +1,7 @@
 import streamlit as st
 from gtts import gTTS
 
-from img_gen_v2 import generate_story
+from img_gen import generate_story
 from prompt_generation import pipeline
 
 
@@ -15,7 +15,7 @@ def page_navigation(current_page):
                 current_page -= 1
 
     with col2:
-        st.write(f'Step {current_page} of 10')
+        print(f'Step {current_page} of 10')
 
     if current_page < 10:
         with col3:
@@ -23,10 +23,11 @@ def page_navigation(current_page):
                 if current_page == 0:
                     user_input = st.session_state.user_input
                     prompt_response = pipeline(user_input, 10)
-                    steps = prompt_response.get("steps")
+                    image_prompts_steps = prompt_response.get("image_prompts_steps")
                     init_prompt = prompt_response.get("story")
 
-                    init_img, img_dict = generate_story(init_prompt, steps)
+                    init_img, img_dict = generate_story(init_prompt,
+                                                        image_prompts_steps)
 
                     st.session_state.pipeline_response = prompt_response
                     st.session_state.init_img = init_img
@@ -42,7 +43,7 @@ def get_pipeline_data(page_number):
     pipeline_response = st.session_state.pipeline_response
     text_output = pipeline_response.get("steps")[page_number - 1]
     img_dict = st.session_state.img_dict
-    img = img_dict[page_number-1].get("image")
+    img = img_dict[page_number - 1].get("image")
 
     return {"text_output": text_output, "image_obj": img}
 
@@ -69,7 +70,7 @@ def main():
         # Display text output
         st.write(text_output)
 
-        tts = gTTS(text_output)
+        tts = gTTS(text_output.split(".", 1)[1])
         tts.save('audio.mp3')
         st.audio('audio.mp3')
 
