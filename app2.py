@@ -20,13 +20,13 @@ def get_random_data(page_number, user_input=None):
 def page_navigation(current_page):
     col1, col2, col3 = st.columns(3)
 
-    if current_page > 1:
+    if current_page > 0:
         with col1:
             if st.button('<< Previous'):
                 current_page -= 1
 
     with col2:
-        st.write(f'Page {current_page} of 10')
+        st.write(f'Step {current_page} of 10')
 
     if current_page < 10:
         with col3:
@@ -37,17 +37,17 @@ def page_navigation(current_page):
 
 # Main function to display the pages
 def main():
-    st.set_page_config(page_title="Streamlit 10 Page App", layout="wide")
-    st.title("Streamlit 10 Page App")
+    st.set_page_config(page_title="Narrative chat", layout="wide")
+    st.title("Narrative Chat")
 
     # Initialize the current page
-    current_page = st.session_state.get('current_page', 1)
+    current_page = st.session_state.get('current_page', 0)
 
     # Display content for each page
-    if current_page == 1:
-        st.header("Page 1")
-        st.write("Please enter some text:")
-        user_input = st.text_input("")
+    if current_page == 0:
+        st.header("Narrative Chat")
+        st.write("Please enter a storyline:")
+        user_input = st.text_area("")
         st.session_state.user_input = user_input
 
     else:
@@ -57,7 +57,7 @@ def main():
         image_url = data.get('image_url', '')
 
         # Display text output
-        st.header(f"Page {current_page}")
+        st.header(f"Step {current_page}")
         st.write(text_output)
 
         # Display image output
@@ -68,6 +68,8 @@ def main():
 
     # Display page navigation
     current_page = page_navigation(current_page)
+
+    st.write('current_page:', current_page)
     st.session_state.current_page = current_page
 
 if __name__ == "__main__":
