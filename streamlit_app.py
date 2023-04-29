@@ -4,6 +4,7 @@ from PIL import Image
 from io import BytesIO
 from gtts import gTTS
 
+from img_gen_v2 import generate_story
 from prompt_generation import pipeline
 
 
@@ -24,9 +25,15 @@ def page_navigation(current_page):
             if st.button('Next >>'):
                 if current_page == 0:
                     user_input = st.session_state.user_input
-                    response = pipeline(user_input, 10)
+                    prompt_response = pipeline(user_input, 10)
+                    steps = prompt_response.get("steps")
+                    init_prompt = prompt_response.get("story")
 
-                    st.session_state.pipeline_response = response
+                    init_img, img_dict = generate_story(init_prompt, steps)
+
+                    st.session_state.pipeline_response = prompt_response
+                    st.session_state.init_img = init_img
+                    st.session_state.img_dict = img_dict
 
                 current_page += 1
 
@@ -38,11 +45,13 @@ def get_pipeline_data(page_number):
     pipeline_response = st.session_state.pipeline_response
     text_output = pipeline_response.get("steps")[page_number - 1]
 
-    random_img = f"https://picsum.photos/800/600?random={page_number}"
-    response = requests.get(random_img)
-    image = Image.open(BytesIO(response.content))
+    # random_img = f"https://picsum.photos/800/600?random={page_number}"
+    # response = requests.get(random_img)
+    # image = Image.open(BytesIO(response.content))
+    img_dict = st.session_state.img_dict
+    img = img_dict[page_number-1]
 
-    return {"text_output": text_output, "image_obj": image}
+    return {"text_output": text_output, "image_obj": img}
 
 
 def main():
