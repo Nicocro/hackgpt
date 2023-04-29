@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 from PIL import Image
 from io import BytesIO
-import json
+from gtts import gTTS
 
 from prompt_generation import pipeline
 
@@ -66,6 +66,10 @@ def main():
 
         # Display text output
         st.write(text_output)
+
+        tts = gTTS(text_output)
+        tts.save('audio.mp3')
+        st.audio('audio.mp3')
 
         # Display image output
         if image:
