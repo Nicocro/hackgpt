@@ -24,7 +24,7 @@ def page_navigation(current_page):
             if st.button('Next >>'):
                 if current_page == 0:
                     user_input = st.session_state.user_input
-                    response = pipeline(user_input, 5)
+                    response = pipeline(user_input, 10)
 
                     st.session_state.pipeline_response = response
 
@@ -35,24 +35,26 @@ def page_navigation(current_page):
 
 # Main function to display the pages
 def get_pipeline_data(page_number):
-    random_img = f"https://picsum.photos/800/600?random={page_number}"
     pipeline_response = st.session_state.pipeline_response
     text_output = pipeline_response.get("steps")[page_number - 1]
 
-    return {"text_output": text_output, "image_url": random_img}
+    random_img = f"https://picsum.photos/800/600?random={page_number}"
+    response = requests.get(random_img)
+    image = Image.open(BytesIO(response.content))
+
+    return {"text_output": text_output, "image_obj": image}
 
 
 def main():
     st.set_page_config(page_title="Narrative chat", layout="wide")
-    st.title("Narrative Chat")
+    st.title("DreamBot")
 
     # Initialize the current page
     current_page = st.session_state.get('current_page', 0)
 
     # Display content for each page
     if current_page == 0:
-        st.header("Narrative Chat")
-        st.write("Please enter a storyline:")
+        st.write("Tell me what story you would like me to tell:")
         user_input = st.text_area("")
         st.session_state.user_input = user_input
 
@@ -60,18 +62,14 @@ def main():
         # Retrieve data from random generators
         data = get_pipeline_data(current_page)
         text_output = data.get('text_output', '')
-        image_url = data.get('image_url', '')
+        image = data.get('image_obj', '')
 
         # Display text output
-        st.header(f"Step {current_page}")
         st.write(text_output)
 
         # Display image output
-        if image_url:
-            response = requests.get(image_url)
-            image = Image.open(BytesIO(response.content))
-            st.image(image, caption=f"Image for Page {current_page}",
-                     use_column_width=False, width=400)
+        if image:
+            st.image(image, use_column_width=False, width=400)
 
     # Display page navigation
     current_page = page_navigation(current_page)
