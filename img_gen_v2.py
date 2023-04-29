@@ -6,7 +6,6 @@ from diffusers import StableDiffusionImg2ImgPipeline, \
 
 def check_cuda_device():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(device)
     return device
 
 
@@ -40,25 +39,25 @@ def get_image_to_image_model(path=None, device=None):
         device = check_cuda_device()
         pipe.to(device)
 
-    print(device)
-
     return pipe
 
 
 def gen_initial_img(int_prompt):
     model = get_the_model(None)
-    image = model(int_prompt, num_inference_steps=25).images[0]
+    image = model(int_prompt, num_inference_steps=100).images[0]
 
     return image
 
 
-def generate_story(int_prompt, steps, iterations=25):
+def generate_story(int_prompt, steps, iterations=100):
     image_dic = {}
     init_img = gen_initial_img(int_prompt)
     img2img_model = get_image_to_image_model()
     img = init_img
 
     for idx, step in enumerate(steps):
+        print(f"step: {idx}")
+        print(step)
         image = img2img_model(prompt=step, image=img, strength=0.75, guidance_scale=7.5,
                               num_inference_steps=iterations).images[0]
         image_dic[idx] = {
