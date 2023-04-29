@@ -40,29 +40,32 @@ def get_image_to_image_model(path=None, device=None):
         device = check_cuda_device()
         pipe.to(device)
 
+    print(device)
+
     return pipe
 
 
 def gen_initial_img(int_prompt):
-    # image = get_the_model(num_inference_steps=100).images[0]
     model = get_the_model(None)
-    image = model(int_prompt, num_inference_steps=100).images[0]
+    image = model(int_prompt, num_inference_steps=10).images[0]
 
     return image
 
 
-def generate_story(pipe, original_image, steps, iterations=10):
+def generate_story(int_prompt, steps, iterations=10):
     image_dic = {}
-    img = original_image
+    init_img = gen_initial_img(int_prompt)
+    img2img_model = get_image_to_image_model()
+    img = init_img
+
     for idx, step in enumerate(steps):
-        print(idx)
-        image = pipe(prompt=step, image=img, strength=0.75, guidance_scale=7.5,
-                     num_inference_steps=iterations).images[0]
-        image_dic[f"step_{idx}"] = {
+        image = img2img_model(prompt=step, image=img, strength=0.75, guidance_scale=7.5,
+                              num_inference_steps=iterations).images[0]
+        image_dic[idx] = {
             "image": image,
             "prompt": step
         }
         img = image
         break
 
-    return image_dic
+    return init_img, image_dic
